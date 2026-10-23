@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>LiftLog · Workout tracker</title>
+  <meta name="description" content="Log sets and reps, spot personal records automatically and watch your strength trend. Works offline.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#ECEFF3" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0E1115" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="LiftLog">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top__inner">
+      <a class="brand" href="./">
+        <img src="icons/icon-192.png" alt="" width="32" height="32">
+        <span>LiftLog</span>
+      </a>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch colour theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="banner" id="demo-banner" hidden>
+      <p><strong>You're looking at 8 weeks of demo training.</strong> Clear it whenever you want to log your own.</p>
+      <button class="btn btn--small" id="clear-demo" type="button">Start fresh</button>
+    </div>
+
+    <section class="stats" aria-label="This week">
+      <div class="stat"><span class="stat__value" id="stat-sessions">0</span><span class="stat__label">Sessions this week</span></div>
+      <div class="stat"><span class="stat__value" id="stat-volume">0 kg</span><span class="stat__label">Volume this week</span></div>
+      <div class="stat stat--accent"><span class="stat__value" id="stat-streak">0</span><span class="stat__label">Week streak</span></div>
+    </section>
+
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" id="tab-log" aria-controls="panel-log" aria-selected="true" data-tab="log">Log</button>
+      <button role="tab" id="tab-history" aria-controls="panel-history" aria-selected="false" data-tab="history" tabindex="-1">History</button>
+      <button role="tab" id="tab-progress" aria-controls="panel-progress" aria-selected="false" data-tab="progress" tabindex="-1">Progress</button>
+    </nav>
+
+    <!-- LOG -->
+    <section class="panel" id="panel-log" role="tabpanel" aria-labelledby="tab-log">
+      <div class="card session">
+        <label class="field">Workout
+          <input id="session-name" placeholder="e.g. Push day" autocomplete="off">
+        </label>
+        <label class="field field--date">Date
+          <input id="session-date" type="date">
+        </label>
+      </div>
+
+      <div id="exercise-list" class="exercise-list"></div>
+
+      <form class="card add-exercise" id="add-exercise-form">
+        <label class="field">Add exercise
+          <input id="exercise-input" list="exercise-options" placeholder="Search or type a new one" autocomplete="off" required>
+        </label>
+        <datalist id="exercise-options"></datalist>
+        <button class="btn btn--ghost" type="submit">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Add
+        </button>
+      </form>
+
+      <div class="finish">
+        <p class="muted" id="draft-summary">No sets logged yet.</p>
+        <button class="btn btn--primary btn--wide" id="finish-workout" type="button" disabled>Finish &amp; save workout</button>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="panel" id="panel-history" role="tabpanel" aria-labelledby="tab-history" hidden>
+      <ol class="history" id="history-list"></ol>
+      <p class="empty" id="history-empty" hidden>No workouts yet. Log your first one in the Log tab.</p>
+    </section>
+
+    <!-- PROGRESS -->
+    <section class="panel" id="panel-progress" role="tabpanel" aria-labelledby="tab-progress" hidden>
+      <div class="card">
+        <div class="progress-head">
+          <label class="field">Exercise
+            <select id="progress-exercise"></select>
+          </label>
+        </div>
+        <div class="kpis">
+          <div><span class="kpi__label">Best est. 1RM</span><span class="kpi__value" id="kpi-best">–</span></div>
+          <div><span class="kpi__label">Heaviest set</span><span class="kpi__value" id="kpi-heaviest">–</span></div>
+          <div><span class="kpi__label">Change</span><span class="kpi__value" id="kpi-change">–</span></div>
+          <div><span class="kpi__label">Sessions</span><span class="kpi__value" id="kpi-sessions">–</span></div>
+        </div>
+        <div class="chart" id="progress-chart"></div>
+        <p class="legend"><span class="legend__dot"></span> Personal record <span class="muted">· est. 1RM uses the Epley formula, kg × (1 + reps ÷ 30)</span></p>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p class="muted">Your training data stays on this device. It works offline, and you can install it from the browser menu.</p>
+      <div class="foot__actions">
+        <button class="link" id="export-json" type="button">Export backup</button>
+        <label class="link">Import backup<input type="file" id="import-json" accept="application/json,.json" hidden></label>
+        <button class="link" id="load-demo" type="button">Load demo data</button>
+      </div>
+    </footer>
+  </main>
+
+  <template id="exercise-template">
+    <article class="card exercise">
+      <header class="exercise__head">
+        <h3 class="exercise__name"></h3>
+        <span class="exercise__best muted"></span>
+        <button class="icon-btn" type="button" data-action="remove-exercise" aria-label="Remove exercise">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+      <div class="sets">
+        <div class="sets__head" aria-hidden="true"><span>Set</span><span>kg</span><span>Reps</span><span>Est. 1RM</span><span></span></div>
+        <div class="sets__rows"></div>
+      </div>
+      <button class="btn btn--small" type="button" data-action="add-set">+ Add set</button>
+    </article>
+  </template>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>

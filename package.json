@@ -1,0 +1,12 @@
+{
+  "name": "workout-tracker",
+  "version": "1.0.0",
+  "description": "LiftLog: an offline-first workout tracker with PR detection and strength progress charts.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "npx serve .",
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
